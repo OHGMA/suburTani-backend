@@ -25,7 +25,11 @@ class AuthController extends Controller
             ]);
         }
 
-        $token = $user->createToken('personal_token', expiresAt:now()->addDay())->plainTextToken;
+        if ($user->role == 'admin') {
+            $token = $user->createToken('token',['role:admin'], expiresAt:now()->addDay())->plainTextToken;
+        } else {
+            $token = $user->createToken('token',['role:user'], expiresAt:now()->addDay())->plainTextToken;
+        }
 
         return response()->json(['token' => $token], 200);
     }
