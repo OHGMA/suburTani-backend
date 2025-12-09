@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\Transaction;
 use App\Models\Product;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Validator;
 
 class TransactionController extends Controller
 {
@@ -30,15 +31,19 @@ class TransactionController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validator = Validator::make($request->all(), [
             'product_id' => 'required|exists:products,id',
             'jumlah' => 'required|integer|min:1',
         ]);
 
+        if ($validator->fails()) {
+            return response()->json($validator->errors(), 422);
+        }
+
         $product = Product::findOrFail($request->product_id);
 
         if ($product->stok < $request->jumlah) {
-            return response()->json(['message' => 'Stok produk tidak mencukupi!'], 400);
+            return response()->json(['jumlah' => ['Stok produk tidak mencukupi!']], 422);
         }
 
         $total = $product->harga * $request->jumlah;

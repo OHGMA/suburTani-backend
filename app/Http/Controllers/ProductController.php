@@ -86,10 +86,10 @@ class ProductController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'nama' => 'string|max:255',
+            'nama' => 'required|string|max:255',
             'deskripsi' => 'nullable|string',
-            'harga' => 'integer',
-            'stok' => 'integer',
+            'harga' => 'required|integer|min:0',
+            'stok' => 'required|integer|min:0',
             'gambar' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
